@@ -9,8 +9,6 @@ require "google_directory/user_commands"
 module GoogleDirectory
   class Connection
 
-    attr_reader :response
-
     include GoogleDirectory::UserCommands
 
     # Get from the Google Cloud Admin
@@ -31,9 +29,6 @@ module GoogleDirectory
     # https://github.com/google/google-api-ruby-client/issues/360
     def initialize( service: Google::Apis::AdminDirectoryV1::DirectoryService,
                     app_name: nil )
-
-      @response  = { successes: [], errors: [] }
-
       app_name ||= ENV['APPLICATION_NAME'] || 'google_cloud_admin_name'
       @service   = service.new
       @service.client_options.application_name = app_name
@@ -43,10 +38,11 @@ module GoogleDirectory
     # google = GoogleDirectory.new
     # answer = google.run(action: :user_get, attributes: {primary_email: "btihen@las.ch"})
     def run( action:, attributes: {} )
+      response  = { successes: [], errors: [] }
       begin
-        @response[:successes] << send( action, attributes: attributes )
+        response[:successes] << send( action, attributes: attributes )
       rescue Google::Apis::ClientError => error
-        @response[:errors] << error.message
+        response[:errors] << error.message
       end
       response
     end

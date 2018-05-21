@@ -10,7 +10,8 @@ google = GoogleDirectory::Connection.new
 
 
 # list users
-response = google.run( action: :user_get, attributes: {primary_email: "btihen@las.ch"})
+response = google.run(action: :user_get,
+                      attributes: {primary_email: "btihen@las.ch"})
 
 # see results
 puts response

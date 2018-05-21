@@ -5,7 +5,7 @@ require "google_directory/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "google_directory"
-  spec.version       = GoogleDirectory::VERSION
+  spec.version       = GoogleDirectory::Version::VERSION
   spec.authors       = ["Bill Tihen", "Lee Weisbecker"]
   spec.email         = ["btihen@gmail.com", "lweisbecker@las.ch"]
 
