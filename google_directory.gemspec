@@ -28,11 +28,18 @@ Gem::Specification.new do |spec|
   end
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
-  spec.require_paths = ["lib"]
+  # spec.require_paths = ["lib"]
+  spec.files = Dir['lib/**/*.rb']
+  # spec.files = ['lib/google_directory.rb',
+  #               'lib/google_directory/connection.rb',
+  #               'lib/google_directory/user_commands.rb']
 
   spec.add_dependency "google-api-client", "~> 0.21"
 
   spec.add_development_dependency "bundler", "~> 1.16"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  # spec.add_development_dependency "rake", "~> 12.3"
+  # spec.add_development_dependency "rspec", "~> 3.7"
+  spec.add_development_dependency "pry", "~> 0.11"
 end
