@@ -23,13 +23,120 @@ Or install it yourself as:
 
 ## Usage
 ```ruby
-# authenticate
-google = GoogleConnect.new(google_credentials)
-# list accounts
-# check if account exists
-# make account
-# suspend account
-# activate account
+# configure
+# Use environmental variables
+# BE SURE TO DOWNLOAD client_secret.json from:
+# https://console.cloud.google.com/apis/
+###########
+
+# connect using
+google = GoogleDirectory::Connection.new
+
+##############
+# VIEW USERS
+# ------------
+# get user details
+google.run(action: :user_get, attributes: {primary_email: "user@domain.com"})
+# => {:success=>
+#   {:action=>:users_get,
+#    :user=>"user@domain.com",
+#    :response=>
+#     #<Google::Apis::AdminDirectoryV1::User:0x00007fdea5d542c0
+#      ...
+#      @primary_email="user@domain.com",
+#      @suspended=false>},
+#  :error=>nil}
+
+google.run(action: :user_exists?, attributes: {primary_email: "user@domain.com"})
+# => {:success=>{:action=>:user_exists?, :user=>"user@domain.com", :response=>true}, :error=>nil}
+
+# confirm non-existence of user
+google.run(action: :user_exists?, attributes: {primary_email: "notuser@domain.com"})
+# => {:success=>{:action=>:user_exists?, :user=>"notuser@domain.com", :response=>false}, :error=>nil}
+
+##############
+# USER CHANGES
+# ------------
+# user attributes can be found at:
+# https://www.rubydoc.info/github/google/google-api-ruby-client/Google/Apis/AdminDirectoryV1/User
+# user_attr = {
+#   :primary_email => 'seeuser@las.ch',
+#   :name => {
+#     :given_name => 'See',
+#     :family_name => 'USER',
+#   },
+#   :org_unit_path => "/",
+#   :suspended => true,
+#   :password => 'some-secret',
+#   :change_password_at_next_login => true,
+# }
+
+# create new user - not name info
+user_attr = {primary_email: "apitemp@las.ch"}
+google.run(action: :user_create, attributes: user_attr)
+# => {:success=>nil,
+#  :error=>
+#   {:action=>:user_create,
+#    :attributes=>{:primary_email=>"apitemp@las.ch"},
+#    :error=>"#<Google::Apis::ClientError: invalid: Invalid Given/Family Name: FamilyName>"}}
+
+# create new user - with random password - suspended by default
+user_attr = { primary_email: "new@domain.com", :name => {:given_name => 'New', :family_name => 'USER'} }
+google.run(action: :user_create, attributes: user_attr)
+# => {:success=>
+#   {:action=>:user_create,
+#    :user=>"new@domain.com",
+#    :response=>
+#     #<Google::Apis::AdminDirectoryV1::User:0x00007f859d041558
+#      @change_password_at_next_login=true,
+#      @creation_time=#<DateTime: 2018-05-22T07:20:55+00:00 ((2458261j,26455s,0n),+0s,2299161j)>,
+#      ...
+#      @primary_email="new@domain.com",
+#      @suspended=true,
+#      @suspension_reason="ADMIN">},
+#  :error=>nil}
+
+# update user settings
+user_attr = { primary_email: "changed@domain.com", org_unit_path: "/" }
+google.run( action: :user_update, attributes: user_attr )
+# => {:success=>
+#   {:action=>:user_update,
+#    :user=>"changed@domain.com",
+#    :response=>
+#     #<Google::Apis::AdminDirectoryV1::User:0x00007f85995574d8
+#      ...
+#      @org_unit_path="/",
+#      @primary_email="changed@domain.com"},
+#  :error=>nil}
+
+# activate user
+google.run(action: :user_reactivate, attributes: {primary_email: "active@domain.com"})
+# => {:success=>
+#   {:action=>:user_reactivate,
+#    :user=>"active@domain.com",
+#    :response=>
+#     #<Google::Apis::AdminDirectoryV1::User:0x00007f859d82ab98
+#     ...
+#      @primary_email="active@domain.com",
+#      @suspended=false>},
+#  :error=>nil}
+
+# suspend user
+google.run(action: :user_suspend, attributes: {primary_email: "suspended@domain.com"})
+# => {:success=>
+#   {:action=>:user_suspend,
+#    :user=>"suspended@domain.com",
+#    :response=>
+#     #<Google::Apis::AdminDirectoryV1::User:0x00007f8599adc1d8
+#      ...
+#      @suspended=true,
+#      @suspension_reason="ADMIN">},
+#  :error=>nil}
+
+# delete user - works
+google.run(action: :user_delete, attributes: {primary_email: "byebye@domain.com"})
+# => {:success=>{:action=>:user_delete, :user=>"byebye@domain.com", :response=>""}, :error=>nil}
+
 ```
 
 ## Development
