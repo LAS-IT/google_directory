@@ -13,9 +13,9 @@ puts "Google Connection Settings: \n#{google.inspect}"
 # ----------------
 
 # check a single user - who exists
-google.run(action: :user_get, attributes: {primary_email: "btihen@las.ch"})
+google.run(command: :user_get, attributes: {primary_email: "btihen@las.ch"})
 # => {:success=>
-#   {:action=>:users_get,
+#   {:command=>:users_get,
 #    :user=>"btihen@las.ch",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007fdf7867ac28
@@ -75,36 +75,36 @@ google.run(action: :user_get, attributes: {primary_email: "btihen@las.ch"})
 #  :error=>nil}
 
 # confirm existence of user
-google.run(action: :user_exists?, attributes: {primary_email: "lweisbecker@las.ch"})
-# => {:success=>{:action=>:user_exists?, :user=>"lweisbecker@las.ch", :response=>true}, :error=>nil}
+google.run(command: :user_exists?, attributes: {primary_email: "lweisbecker@las.ch"})
+# => {:success=>{:command=>:user_exists?, :user=>"lweisbecker@las.ch", :response=>true}, :error=>nil}
 
 
 # check a single user - who doesn't exist
-google.run(action: :user_get, attributes: {primary_email: "apitemp@las.ch"})
+google.run(command: :user_get, attributes: {primary_email: "apitemp@las.ch"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_get,
+#   {:command=>:user_get,
 #    :attributes=>{:primary_email=>"apitemp@las.ch"},
 #    :error=>"#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"}}
 
 # confirm non-existence of user
-google.run(action: :user_exists?, attributes: {primary_email: "apitemp@las.ch"})
-# => {:success=>{:action=>:user_exists?, :user=>"apitemp@las.ch", :response=>false}, :error=>nil}
+google.run(command: :user_exists?, attributes: {primary_email: "apitemp@las.ch"})
+# => {:success=>{:command=>:user_exists?, :user=>"apitemp@las.ch", :response=>false}, :error=>nil}
 
 # error when asking about another domain
-google.run(action: :user_get, attributes: {primary_email: "apitemp@not-ours.ch"})
+google.run(command: :user_get, attributes: {primary_email: "apitemp@not-ours.ch"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_get,
+#   {:command=>:user_get,
 #    :attributes=>{:primary_email=>"apitemp@not-ours.ch"},
 #    :error=>"#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"}}
 
 
 # error when asking about another domain
-google.run(action: :user_exists?, attributes: {primary_email: "apitemp@not-ours.com"})
+google.run(command: :user_exists?, attributes: {primary_email: "apitemp@not-ours.com"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_exists?,
+#   {:command=>:user_exists?,
 #    :attributes=>{:primary_email=>"apitemp@not-ours.com"},
 #    :error=>"#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"}}
 
@@ -128,18 +128,18 @@ google.run(action: :user_exists?, attributes: {primary_email: "apitemp@not-ours.
 
 # create new user - not name info
 user_attr = {primary_email: "apitemp@las.ch"}
-google.run(action: :user_create, attributes: user_attr)
+google.run(command: :user_create, attributes: user_attr)
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_create,
+#   {:command=>:user_create,
 #    :attributes=>{:primary_email=>"apitemp@las.ch"},
 #    :error=>"#<Google::Apis::ClientError: invalid: Invalid Given/Family Name: FamilyName>"}}
 
 # create new user - create with random password
 user_attr = { primary_email: "apitemp@las.ch", :name => {:given_name => 'Api', :family_name => 'TEMP'} }
-google.run(action: :user_create, attributes: user_attr)
+google.run(command: :user_create, attributes: user_attr)
 # => {:success=>
-#   {:action=>:user_create,
+#   {:command=>:user_create,
 #    :user=>"apitemp@las.ch",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007f859d041558
@@ -162,19 +162,19 @@ google.run(action: :user_create, attributes: user_attr)
 
 # create duplicate user error
 user_attr = { primary_email: "apitemp@las.ch", :name => {:given_name => 'Api', :family_name => 'TEMP'} }
-google.run(action: :user_create, attributes: user_attr)
+google.run(command: :user_create, attributes: user_attr)
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_create,
+#   {:command=>:user_create,
 #    :attributes=>{:primary_email=>"apitemp@las.ch", :name=>{:given_name=>"Api", :family_name=>"TEMP"}},
 #    :error=>"#<Google::Apis::ClientError: duplicate: Entity already exists.>"}}
 
 
 # create new user - fails
-google.run(action: :user_create, attributes: {primary_email: "apitemp@not-ours.ch"})
+google.run(command: :user_create, attributes: {primary_email: "apitemp@not-ours.ch"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_create,
+#   {:command=>:user_create,
 #    :attributes=>{:primary_email=>"apitemp@not-ours.ch"},
 #    :error=>"#<Google::Apis::ClientError: notFound: Domain not found.>"}}
 
@@ -182,9 +182,9 @@ google.run(action: :user_create, attributes: {primary_email: "apitemp@not-ours.c
 
 # change password - works
 user_attr = { primary_email: "apitemp@las.ch", password: '34rfgb6yhjm' }
-google.run( action: :user_update, attributes:user_attr )
+google.run( command: :user_update, attributes:user_attr )
 # => {:success=>
-#   {:action=>:user_update,
+#   {:command=>:user_update,
 #    :user=>"apitemp@las.ch",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007f85995574d8
@@ -219,9 +219,9 @@ google.run( action: :user_update, attributes:user_attr )
 # -
 
 # activate user - works
-google.run(action: :user_reactivate, attributes: {primary_email: "apitemp@las.ch"})
+google.run(command: :user_reactivate, attributes: {primary_email: "apitemp@las.ch"})
 # => {:success=>
-#   {:action=>:user_reactivate,
+#   {:command=>:user_reactivate,
 #    :user=>"apitemp@las.ch",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007f859d82ab98
@@ -250,18 +250,18 @@ google.run(action: :user_reactivate, attributes: {primary_email: "apitemp@las.ch
 #  :error=>nil}
 
 # activate non-existent user
-google.run(action: :user_reactivate, attributes: {primary_email: "api-temp@las.ch"})
+google.run(command: :user_reactivate, attributes: {primary_email: "api-temp@las.ch"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_reactivate,
+#   {:command=>:user_reactivate,
 #    :attributes=>{:primary_email=>"api-temp@las.ch"},
 #    :error=>"#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"}}
 
 # activate user in another domain
-google.run(action: :user_reactivate, attributes: {primary_email: "api-temp@not-ours.ch"})
+google.run(command: :user_reactivate, attributes: {primary_email: "api-temp@not-ours.ch"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_reactivate,
+#   {:command=>:user_reactivate,
 #    :attributes=>{:primary_email=>"api-temp@not-ours.ch"},
 #    :error=>"#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"}}
 
@@ -269,9 +269,9 @@ google.run(action: :user_reactivate, attributes: {primary_email: "api-temp@not-o
 # -
 
 # suspend user - works
-google.run(action: :user_suspend, attributes: {primary_email: "apitemp@las.ch"})
+google.run(command: :user_suspend, attributes: {primary_email: "apitemp@las.ch"})
 # => {:success=>
-#   {:action=>:user_suspend,
+#   {:command=>:user_suspend,
 #    :user=>"apitemp@las.ch",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007f8599adc1d8
@@ -301,18 +301,18 @@ google.run(action: :user_suspend, attributes: {primary_email: "apitemp@las.ch"})
 #  :error=>nil}
 
 # suspend non-existent user - fails
-google.run(action: :user_suspend, attributes: {primary_email: "api-temp@las.ch"})
+google.run(command: :user_suspend, attributes: {primary_email: "api-temp@las.ch"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_suspend,
+#   {:command=>:user_suspend,
 #    :attributes=>{:primary_email=>"api-temp@las.ch"},
 #    :error=>"#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"}}
 
 # suspend user in another Domain
-google.run(action: :user_suspend, attributes: {primary_email: "api-temp@not-las.ch"})
+google.run(command: :user_suspend, attributes: {primary_email: "api-temp@not-las.ch"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_suspend,
+#   {:command=>:user_suspend,
 #    :attributes=>{:primary_email=>"api-temp@not-las.ch"},
 #    :error=>"#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"}}
 
@@ -320,22 +320,22 @@ google.run(action: :user_suspend, attributes: {primary_email: "api-temp@not-las.
 # -
 
 # delete user - works
-google.run(action: :user_delete, attributes: {primary_email: "apitemp@las.ch"})
-# => {:success=>{:action=>:user_delete, :user=>"apitemp@las.ch", :response=>""}, :error=>nil}
+google.run(command: :user_delete, attributes: {primary_email: "apitemp@las.ch"})
+# => {:success=>{:command=>:user_delete, :user=>"apitemp@las.ch", :response=>""}, :error=>nil}
 
 
 # delete user - already deleted
-google.run(action: :user_delete, attributes: {primary_email: "apitemp@las.ch"})
+google.run(command: :user_delete, attributes: {primary_email: "apitemp@las.ch"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_delete,
+#   {:command=>:user_delete,
 #    :attributes=>{:primary_email=>"apitemp@las.ch"},
 #    :error=>"#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"}}
 
 # error when deleting a user in another domain
-google.run(action: :user_delete, attributes: {primary_email: "apitemp@notlas.ch"})
+google.run(command: :user_delete, attributes: {primary_email: "apitemp@notlas.ch"})
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_delete,
+#   {:command=>:user_delete,
 #    :attributes=>{:primary_email=>"apitemp@notlas.ch"},
 #    :error=>"#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"}}

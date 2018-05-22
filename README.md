@@ -1,8 +1,8 @@
 # GoogleDirectory
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/google_directory`. To experiment with that code, run `bin/console` for an interactive prompt.
+This is an easy to use ruby wrapper for google directory management - using OAuth2.  So far only user management commands are written.
 
-TODO: Delete this and the text above, and describe your gem
+* Docs found at: https://www.rubydoc.info/gems/google_directory/
 
 ## Installation
 
@@ -22,7 +22,9 @@ Or install it yourself as:
 
 ## Change Log
 
-* **0.1.0** - *2018-05-22* - initial release 
+* **0.1.0** - *2018-05-22* - initial release
+
+* **0.2.0** - *2018-05-22* - renamed action to command
 
 ## Usage
 ```ruby
@@ -39,9 +41,9 @@ google = GoogleDirectory::Connection.new
 # VIEW USERS
 # ------------
 # get user details
-google.run(action: :user_get, attributes: {primary_email: "user@domain.com"})
+google.run(command: :user_get, attributes: {primary_email: "user@domain.com"})
 # => {:success=>
-#   {:action=>:users_get,
+#   {:command=>:users_get,
 #    :user=>"user@domain.com",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007fdea5d542c0
@@ -50,44 +52,33 @@ google.run(action: :user_get, attributes: {primary_email: "user@domain.com"})
 #      @suspended=false>},
 #  :error=>nil}
 
-google.run(action: :user_exists?, attributes: {primary_email: "user@domain.com"})
-# => {:success=>{:action=>:user_exists?, :user=>"user@domain.com", :response=>true}, :error=>nil}
+google.run(command: :user_exists?, attributes: {primary_email: "user@domain.com"})
+# => {:success=>{:command=>:user_exists?, :user=>"user@domain.com", :response=>true}, :error=>nil}
 
 # confirm non-existence of user
-google.run(action: :user_exists?, attributes: {primary_email: "notuser@domain.com"})
-# => {:success=>{:action=>:user_exists?, :user=>"notuser@domain.com", :response=>false}, :error=>nil}
+google.run(command: :user_exists?, attributes: {primary_email: "notuser@domain.com"})
+# => {:success=>{:command=>:user_exists?, :user=>"notuser@domain.com", :response=>false}, :error=>nil}
 
 ##############
 # USER CHANGES
 # ------------
 # user attributes can be found at:
 # https://www.rubydoc.info/github/google/google-api-ruby-client/Google/Apis/AdminDirectoryV1/User
-# user_attr = {
-#   :primary_email => 'seeuser@las.ch',
-#   :name => {
-#     :given_name => 'See',
-#     :family_name => 'USER',
-#   },
-#   :org_unit_path => "/",
-#   :suspended => true,
-#   :password => 'some-secret',
-#   :change_password_at_next_login => true,
-# }
 
 # create new user - not name info
 user_attr = {primary_email: "apitemp@las.ch"}
-google.run(action: :user_create, attributes: user_attr)
+google.run(command: :user_create, attributes: user_attr)
 # => {:success=>nil,
 #  :error=>
-#   {:action=>:user_create,
+#   {:command=>:user_create,
 #    :attributes=>{:primary_email=>"apitemp@las.ch"},
 #    :error=>"#<Google::Apis::ClientError: invalid: Invalid Given/Family Name: FamilyName>"}}
 
 # create new user - with random password - suspended by default
 user_attr = { primary_email: "new@domain.com", :name => {:given_name => 'New', :family_name => 'USER'} }
-google.run(action: :user_create, attributes: user_attr)
+google.run(command: :user_create, attributes: user_attr)
 # => {:success=>
-#   {:action=>:user_create,
+#   {:command=>:user_create,
 #    :user=>"new@domain.com",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007f859d041558
@@ -101,9 +92,9 @@ google.run(action: :user_create, attributes: user_attr)
 
 # update user settings
 user_attr = { primary_email: "changed@domain.com", org_unit_path: "/" }
-google.run( action: :user_update, attributes: user_attr )
+google.run( command: :user_update, attributes: user_attr )
 # => {:success=>
-#   {:action=>:user_update,
+#   {:command=>:user_update,
 #    :user=>"changed@domain.com",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007f85995574d8
@@ -113,9 +104,9 @@ google.run( action: :user_update, attributes: user_attr )
 #  :error=>nil}
 
 # activate user
-google.run(action: :user_reactivate, attributes: {primary_email: "active@domain.com"})
+google.run(command: :user_reactivate, attributes: {primary_email: "active@domain.com"})
 # => {:success=>
-#   {:action=>:user_reactivate,
+#   {:command=>:user_reactivate,
 #    :user=>"active@domain.com",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007f859d82ab98
@@ -125,9 +116,9 @@ google.run(action: :user_reactivate, attributes: {primary_email: "active@domain.
 #  :error=>nil}
 
 # suspend user
-google.run(action: :user_suspend, attributes: {primary_email: "suspended@domain.com"})
+google.run(command: :user_suspend, attributes: {primary_email: "suspended@domain.com"})
 # => {:success=>
-#   {:action=>:user_suspend,
+#   {:command=>:user_suspend,
 #    :user=>"suspended@domain.com",
 #    :response=>
 #     #<Google::Apis::AdminDirectoryV1::User:0x00007f8599adc1d8
@@ -137,8 +128,8 @@ google.run(action: :user_suspend, attributes: {primary_email: "suspended@domain.
 #  :error=>nil}
 
 # delete user - works
-google.run(action: :user_delete, attributes: {primary_email: "byebye@domain.com"})
-# => {:success=>{:action=>:user_delete, :user=>"byebye@domain.com", :response=>""}, :error=>nil}
+google.run(command: :user_delete, attributes: {primary_email: "byebye@domain.com"})
+# => {:success=>{:command=>:user_delete, :user=>"byebye@domain.com", :response=>""}, :error=>nil}
 
 ```
 

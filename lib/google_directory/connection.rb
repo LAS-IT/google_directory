@@ -44,27 +44,27 @@ module GoogleDirectory
 
     # @note Run a command against Google Directory
     #
-    # @param action [Symbol] choose action to perform these include: :user_get, :user_exists? (t/f), :user_create, :user_delete, :user_update & convience commands :user_suspend, :user_reactivate, :user_change_password
-    # @param attributes [Hash] attributes needed to perform action
-    # @return [Hash] will hopefully return a hash with {success: {action: :action, attributes: {primary_email: "user@domain"}, response: "whatever google answered - usually a hash"} }
-    def run( action:, attributes: {} )
+    # @param command [Symbol] choose command to perform these include: :user_get, :user_exists? (t/f), :user_create, :user_delete, :user_update & convience commands :user_suspend, :user_reactivate, :user_change_password
+    # @param attributes [Hash] attributes needed to perform command
+    # @return [Hash] formatted as: `{success: {command: :command, attributes: {primary_email: "user@domain"}, response: GoogleAnswer} }`
+    def run( command:, attributes: {} )
       response  = { success: nil, error: nil }
       begin
-        response[:success] = send( action, attributes: attributes )
+        response[:success] = send( command, attributes: attributes )
       rescue Google::Apis::ClientError => error
-        response[:error]   = {action: action, attributes: attributes,
+        response[:error]   = {command: command, attributes: attributes,
                               error: error}
       end
       response
     end
     alias_method :execute, :run
 
-    # # answer = GoogleDirectory.(action: :user_get, attributes: {primary_email: "btihen@las.ch"})
+    # # answer = GoogleDirectory.(command: :user_get, attributes: {primary_email: "btihen@las.ch"})
     # def self.call(service: Google::Apis::AdminDirectoryV1::DirectoryService,
     #               app_name: nil,
-    #               action:, attributes: {} )
+    #               command:, attributes: {} )
     #   new(service: service, app_name: app_name).
-    #     run(action: action, attributes: attributes)
+    #     run(command: command, attributes: attributes)
     # end
 
     private

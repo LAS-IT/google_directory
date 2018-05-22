@@ -23,17 +23,17 @@ RSpec.describe GoogleDirectory::UserCommands do
 
   context "get info on a single user" do
     it "who exists" do
-      answer  = google.run(action: :user_get, attributes: valid_key)
+      answer  = google.run(command: :user_get, attributes: valid_key)
       correct = valid_key[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
     end
     it "who doesn't exist" do
-      answer  = google.run(action: :user_get, attributes: notuser_key)
+      answer  = google.run(command: :user_get, attributes: notuser_key)
       correct = "#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
     it "with wrong domain" do
-      answer  = google.run(action: :user_get, attributes: bad_domain)
+      answer  = google.run(command: :user_get, attributes: bad_domain)
       correct = "#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
@@ -41,15 +41,15 @@ RSpec.describe GoogleDirectory::UserCommands do
 
   context "test if single user exists" do
     it "who exists" do
-      answer  = google.run(action: :user_exists?, attributes: valid_key)
+      answer  = google.run(command: :user_exists?, attributes: valid_key)
       expect( answer[:success][:response] ).to be_truthy
     end
     it "who doesn't exist" do
-      answer  = google.run(action: :user_exists?, attributes: notuser_key)
+      answer  = google.run(command: :user_exists?, attributes: notuser_key)
       expect( answer[:success][:response] ).to be_falsey
     end
     it "with wrong domain" do
-      answer  = google.run(action: :user_exists?, attributes: bad_domain)
+      answer  = google.run(command: :user_exists?, attributes: bad_domain)
       correct = "#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
@@ -57,29 +57,29 @@ RSpec.describe GoogleDirectory::UserCommands do
 
   context "test successful user creation" do
     after(:each) do
-      google.run(action: :user_delete, attributes: new_attr)
+      google.run(command: :user_delete, attributes: new_attr)
     end
     it "with valid attributes" do
-      start   = google.run(action: :user_exists?, attributes: new_attr)
+      start   = google.run(command: :user_exists?, attributes: new_attr)
       expect( start[:success][:response] ).to be_falsey
-      answer  = google.run(action: :user_create, attributes: new_attr)
+      answer  = google.run(command: :user_create, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
     end
   end
   context "test failing user creation" do
     it "with an existing user" do
-      answer  = google.run(action: :user_create, attributes: change_attr)
+      answer  = google.run(command: :user_create, attributes: change_attr)
       correct = "#<Google::Apis::ClientError: duplicate: Entity already exists.>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
     it "with incomplete attributes" do
-      answer  = google.run(action: :user_create, attributes: new_bad_attr)
+      answer  = google.run(command: :user_create, attributes: new_bad_attr)
       correct = "#<Google::Apis::ClientError: invalid: Invalid Given/Family Name: FamilyName>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
     it "with wrong domain" do
-      answer  = google.run(action: :user_create, attributes: not_las_attr)
+      answer  = google.run(command: :user_create, attributes: not_las_attr)
       correct = "#<Google::Apis::ClientError: notFound: Domain not found.>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
@@ -87,16 +87,16 @@ RSpec.describe GoogleDirectory::UserCommands do
 
   context "update user attributes" do
     it "who exists" do
-      answer  = google.run(action: :user_update, attributes: change_attr)
+      answer  = google.run(command: :user_update, attributes: change_attr)
       expect( answer[:success][:response] ).to be_truthy
     end
     it "who doesn't exist" do
-      answer  = google.run(action: :user_update, attributes: new_attr)
+      answer  = google.run(command: :user_update, attributes: new_attr)
       correct = "#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
     it "with wrong domain" do
-      answer  = google.run(action: :user_update, attributes: not_las_attr)
+      answer  = google.run(command: :user_update, attributes: not_las_attr)
       correct = "#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
@@ -104,27 +104,27 @@ RSpec.describe GoogleDirectory::UserCommands do
 
   context "successful password change" do
     before(:each) do
-      google.run(action: :user_create, attributes: new_attr)
+      google.run(command: :user_create, attributes: new_attr)
     end
     after(:each) do
-      google.run(action: :user_delete, attributes: new_attr)
+      google.run(command: :user_delete, attributes: new_attr)
     end
     it "when user exists" do
-      start   = google.run(action: :user_exists?, attributes: new_attr)
+      start   = google.run(command: :user_exists?, attributes: new_attr)
       expect( start[:success][:response] ).to be_truthy
-      answer  = google.run(action: :user_change_password, attributes: new_attr)
+      answer  = google.run(command: :user_change_password, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
     end
   end
   context "failing password change" do
     it "when user doesn't exist" do
-      answer  = google.run(action: :user_change_password, attributes: notuser_key)
+      answer  = google.run(command: :user_change_password, attributes: notuser_key)
       correct = "#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
     it "with wrong domain" do
-      answer  = google.run(action: :user_change_password, attributes: bad_domain)
+      answer  = google.run(command: :user_change_password, attributes: bad_domain)
       correct = "#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
@@ -132,27 +132,27 @@ RSpec.describe GoogleDirectory::UserCommands do
 
   context "activate existing user" do
     before(:each) do
-      google.run(action: :user_create, attributes: new_attr)
+      google.run(command: :user_create, attributes: new_attr)
     end
     after(:each) do
-      google.run(action: :user_delete, attributes: new_attr)
+      google.run(command: :user_delete, attributes: new_attr)
     end
     it "when user exists" do
-      start   = google.run(action: :user_exists?, attributes: new_attr)
+      start   = google.run(command: :user_exists?, attributes: new_attr)
       expect( start[:success][:response] ).to be_truthy
-      answer  = google.run(action: :user_reactivate, attributes: new_attr)
+      answer  = google.run(command: :user_reactivate, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
     end
   end
   context "failing to activate user" do
     it "when user doesn't exist" do
-      answer  = google.run(action: :user_reactivate, attributes: notuser_key)
+      answer  = google.run(command: :user_reactivate, attributes: notuser_key)
       correct = "#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
     it "with wrong domain" do
-      answer  = google.run(action: :user_reactivate, attributes: bad_domain)
+      answer  = google.run(command: :user_reactivate, attributes: bad_domain)
       correct = "#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
@@ -160,27 +160,27 @@ RSpec.describe GoogleDirectory::UserCommands do
 
   context "suspend existing user" do
     before(:each) do
-      google.run(action: :user_create, attributes: new_attr)
+      google.run(command: :user_create, attributes: new_attr)
     end
     after(:each) do
-      google.run(action: :user_delete, attributes: new_attr)
+      google.run(command: :user_delete, attributes: new_attr)
     end
     it "when user exists" do
-      start   = google.run(action: :user_exists?, attributes: new_attr)
+      start   = google.run(command: :user_exists?, attributes: new_attr)
       expect( start[:success][:response] ).to be_truthy
-      answer  = google.run(action: :user_suspend, attributes: new_attr)
+      answer  = google.run(command: :user_suspend, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
     end
   end
   context "failing to suspend user" do
     it "when user doesn't exist" do
-      answer  = google.run(action: :user_suspend, attributes: notuser_key)
+      answer  = google.run(command: :user_suspend, attributes: notuser_key)
       correct = "#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
     it "with wrong domain" do
-      answer  = google.run(action: :user_suspend, attributes: bad_domain)
+      answer  = google.run(command: :user_suspend, attributes: bad_domain)
       correct = "#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
@@ -188,26 +188,26 @@ RSpec.describe GoogleDirectory::UserCommands do
 
   context "delete existing user" do
     before(:each) do
-      google.run(action: :user_create, attributes: new_attr)
+      google.run(command: :user_create, attributes: new_attr)
     end
     it "when user exists" do
-      start   = google.run(action: :user_exists?, attributes: new_attr)
+      start   = google.run(command: :user_exists?, attributes: new_attr)
       expect( start[:success][:response] ).to be_truthy
-      answer  = google.run(action: :user_delete, attributes: new_attr)
+      answer  = google.run(command: :user_delete, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
-      confirm = google.run(action: :user_exists?, attributes: notuser_key)
+      confirm = google.run(command: :user_exists?, attributes: notuser_key)
       expect( confirm[:success][:response] ).to be_falsey
     end
   end
   context "failing to delete user" do
     it "when user doesn't exist" do
-      answer  = google.run(action: :user_delete, attributes: notuser_key)
+      answer  = google.run(command: :user_delete, attributes: notuser_key)
       correct = "#<Google::Apis::ClientError: notFound: Resource Not Found: userKey>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
     it "with wrong domain" do
-      answer  = google.run(action: :user_delete, attributes: bad_domain)
+      answer  = google.run(command: :user_delete, attributes: bad_domain)
       correct = "#<Google::Apis::ClientError: forbidden: Not Authorized to access this resource/api>"
       expect( "#{answer[:error][:error].inspect}" ).to eq( correct )
     end
