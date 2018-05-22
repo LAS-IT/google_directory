@@ -1,0 +1,11 @@
+---
+- :primary_email: username1@examle.com
+  :name:
+    :given_name: First1 Names
+    :family_name: FAMILY1 NAMES
+  :password: T0pS3cret1
+- :primary_email: username2@examle.com
+  :name:
+    :given_name: First2 Names
+    :family_name: FAMILY2 NAMES
+  :password: T0pS3cret2

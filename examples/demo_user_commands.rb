@@ -1,13 +1,15 @@
-#!/usr/bin/env ruby -w
+#!/usr/bin/env ruby
 
 # run using:
-# ./get_user.rb
+# ./demo_user_commands.rb
 
 require 'google_directory'
 
+# Be sure to put a client_secret.json file from google in this directory
+
 # connect to google
 google = GoogleDirectory::Connection.new
-puts "Google Connection Settings: \n#{google.inspect}"
+pp google
 
 # SINGLE USER GETS
 # ----------------

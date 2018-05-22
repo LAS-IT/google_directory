@@ -15,3 +15,7 @@ client_secret.json
 /.credentials/*
 .rbenv-vars
 *.gem
+
+/examples/users.yml
+/examples/connection.yml
+/examples/client_secret.json
