@@ -55,18 +55,16 @@ RSpec.describe GoogleDirectory::UserCommands do
     end
   end
 
-  xcontext "test successful user creation" do
-    after :each do
+  context "test successful user creation" do
+    after(:each) do
       google.run(action: :user_delete, attributes: new_attr)
     end
     it "with valid attributes" do
+      start   = google.run(action: :user_exists?, attributes: new_attr)
+      expect( start[:success][:response] ).to be_falsey
       answer  = google.run(action: :user_create, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
-      # # ensure removed user after creation
-      # google.run(action: :user_delete, attributes: new_attr)
-      # removed = google.run(action: :user_exists?, attributes: new_attr)
-      # expect( removed[:success][:response] ).to be_falsey
     end
   end
   context "test failing user creation" do
@@ -104,14 +102,16 @@ RSpec.describe GoogleDirectory::UserCommands do
     end
   end
 
-  xcontext "successful password change" do
-    before :each do
+  context "successful password change" do
+    before(:each) do
       google.run(action: :user_create, attributes: new_attr)
     end
-    after :each do
+    after(:each) do
       google.run(action: :user_delete, attributes: new_attr)
     end
     it "when user exists" do
+      start   = google.run(action: :user_exists?, attributes: new_attr)
+      expect( start[:success][:response] ).to be_truthy
       answer  = google.run(action: :user_change_password, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
@@ -130,14 +130,16 @@ RSpec.describe GoogleDirectory::UserCommands do
     end
   end
 
-  xcontext "activate existing user" do
-    before :each do
+  context "activate existing user" do
+    before(:each) do
       google.run(action: :user_create, attributes: new_attr)
     end
-    after :each do
+    after(:each) do
       google.run(action: :user_delete, attributes: new_attr)
     end
     it "when user exists" do
+      start   = google.run(action: :user_exists?, attributes: new_attr)
+      expect( start[:success][:response] ).to be_truthy
       answer  = google.run(action: :user_reactivate, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
@@ -156,14 +158,16 @@ RSpec.describe GoogleDirectory::UserCommands do
     end
   end
 
-  xcontext "suspend existing user" do
-    before :each do
+  context "suspend existing user" do
+    before(:each) do
       google.run(action: :user_create, attributes: new_attr)
     end
-    after :each do
+    after(:each) do
       google.run(action: :user_delete, attributes: new_attr)
     end
     it "when user exists" do
+      start   = google.run(action: :user_exists?, attributes: new_attr)
+      expect( start[:success][:response] ).to be_truthy
       answer  = google.run(action: :user_suspend, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
@@ -182,11 +186,13 @@ RSpec.describe GoogleDirectory::UserCommands do
     end
   end
 
-  xcontext "delete existing user" do
-    before :each do
+  context "delete existing user" do
+    before(:each) do
       google.run(action: :user_create, attributes: new_attr)
     end
     it "when user exists" do
+      start   = google.run(action: :user_exists?, attributes: new_attr)
+      expect( start[:success][:response] ).to be_truthy
       answer  = google.run(action: :user_delete, attributes: new_attr)
       correct = new_attr[:primary_email]
       expect( answer[:success][:user] ).to eq( correct )
