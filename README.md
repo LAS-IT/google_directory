@@ -20,6 +20,9 @@ Or install it yourself as:
 
     $ gem install google_directory
 
+## Change Log
+
+* **0.1.0** - *2018-05-22* - initial release 
 
 ## Usage
 ```ruby
