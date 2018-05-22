@@ -17,7 +17,8 @@ module GoogleDirectory
     # BE SURE TO PUT YOUR SECRET TOKEN in the file: client_secret.json
     # available to download from the cloud admin page or build it using:
     #  build using: https://developers.google.com/api-client-library/ruby/guide/aaa_client_secrets
-    CLIENT_SECRETS_PATH = 'client_secret.json'
+    # CLIENT_SECRETS_PATH = 'client_secret.json'
+    CLIENT_SECRETS_PATH = ENV['CLIENT_SECRETS_PATH']
     OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
     CREDENTIALS_PATH = File.join( Dir.home, '.credentials', "admin-directory_v1-ruby-accounts.yaml")
 
@@ -38,11 +39,12 @@ module GoogleDirectory
     # google = GoogleDirectory.new
     # answer = google.run(action: :user_get, attributes: {primary_email: "btihen@las.ch"})
     def run( action:, attributes: {} )
-      response  = { successes: [], errors: [] }
+      response  = { success: nil, error: nil }
       begin
-        response[:successes] << send( action, attributes: attributes )
+        response[:success] = send( action, attributes: attributes )
       rescue Google::Apis::ClientError => error
-        response[:errors] << error.message
+        response[:error]   = {action: action, attributes: attributes,
+                              error: error}
       end
       response
     end

@@ -1,3 +1,6 @@
+# already required in Google API
+# require 'SecureRandom'
+
 module GoogleDirectory
 
   # DirectoryService Ruby API Commands
@@ -7,72 +10,102 @@ module GoogleDirectory
     # Usage hints
     # https://github.com/google/google-api-ruby-client/issues/360
 
-    # get multiple users
-    # if you don't want the defaults { max_results: 10, order_by: 'email' }
-    # you must override (a nil disables the option)
-    def users_list( attributes: {} )
-      defaults = { max_results: 10, order_by: 'email' }
-      filters  = defaults.merge( attributes )
-      response = service.list_users( filters, attributes[:options] )
-    end
-
     # this attribute MUST include: { primary_email: "username@las.ch" }
     def user_get( attributes: )
-      service.get_user( attributes[:primary_email], attributes[:options] )
+      response = service.get_user( attributes[:primary_email] )
+      {action: :users_get, user: attributes[:primary_email], response: response}
     end
 
     # this attribute MUST include: { primary_email: "username@las.ch" }
     def user_exists?( attributes: )
       begin
-        service.get_user( attributes[:primary_email], attributes[:options] )
-        return true
+        response = service.get_user( attributes[:primary_email] )
+        return {action: :user_exists?, user: attributes[:primary_email], response: true}
       rescue Google::Apis::ClientError => error
-        return false if error.messages.include? 'notFound'
-        raise error
+        if error.message.include? 'notFound'
+          return {action: :user_exists?, user: attributes[:primary_email], response: false}
+        else
+          raise error
+        end
       end
     end
 
     # this attribute MUST include: { primary_email: "username@las.ch" }
     def user_create( attributes: )
-      defaults  = { :suspended => true, :change_password_at_next_login => true }
+      # http://blog.liveedu.tv/ruby-generate-random-string/
+      password = SecureRandom.base64
+      defaults  = { suspended: true, password: password, change_password_at_next_login: true }
       user_attr = defaults.merge( attributes )
-      # create a user object that google will create
+      # create a google user object
       user_object = Google::Apis::AdminDirectoryV1::User.new user_attr
-      # send the user with attributes to google to create account
-      response = service.insert_user( user_object, attributes[:options] )
+      # create user in directory services
+      response = service.insert_user( user_object )
+      {action: :user_create, user: attributes[:primary_email], response: response}
     end
 
     # this attribute MUST include: { primary_email: "username@las.ch" }
     def user_update( attributes: )
       # create a user object for google to update
-      user_object = Google::Apis::AdminDirectoryV1::User.new attributes
-      # update user
-      response = service.update_user( attributes[:primary_email], user_object, attributes[:options] )
+      response = update_user( attributes )
+      # user_object = Google::Apis::AdminDirectoryV1::User.new attributes
+      # # update user
+      # response = service.update_user( attributes[:primary_email], user_object )
+      {action: :user_update, user: attributes[:primary_email], response: response}
+    end
+
+    # this attribute MUST include: { primary_email: "username@las.ch" }
+    def user_change_password( attributes: )
+      # http://blog.liveedu.tv/ruby-generate-random-string/
+      password = SecureRandom.base64
+      defaults  = { password: password, change_password_at_next_login: true }
+      user_attr = defaults.merge( attributes )
+
+      response = update_user( user_attr )
+      # # create a user object that google will create
+      # user_object = Google::Apis::AdminDirectoryV1::User.new user_attr
+      # # update user in directory
+      # response = service.update_user( attributes[:primary_email], user_object )
+      {action: :user_change_password, user: attributes[:primary_email], response: response}
     end
 
     # this attribute MUST include: { primary_email: "username@las.ch" }
     def user_reactivate( attributes: )
       defaults  = { :suspended => false }
       user_attr = defaults.merge( attributes )
-      # create a user object that google will create
-      user_object = Google::Apis::AdminDirectoryV1::User.new user_attr
-      # update user
-      response = service.update_user( attributes[:primary_email], user_object, attributes[:options] )
+
+      response = update_user( user_attr )
+      # # create a user object that google will create
+      # user_object = Google::Apis::AdminDirectoryV1::User.new user_attr
+      # # update user
+      # response = service.update_user( attributes[:primary_email], user_object )
+      {action: :user_reactivate, user: attributes[:primary_email], response: response}
     end
 
     # this attribute MUST include: { primary_email: "username@las.ch" }
     def user_suspend( attributes: )
       defaults  = { :suspended => true }
       user_attr = defaults.merge( attributes )
+
+      response = update_user( user_attr )
       # create a user object that google will create
-      user_object = Google::Apis::AdminDirectoryV1::User.new user_attr
-      # update user
-      response = service.update_user( attributes[:primary_email], user_object, attributes[:options] )
+      # user_object = Google::Apis::AdminDirectoryV1::User.new user_attr
+      # # update user
+      # response = service.update_user( attributes[:primary_email], user_object )
+      {action: :user_suspend, user: attributes[:primary_email], response: response}
     end
-    
+
     # this attribute MUST include: { primary_email: "username@las.ch" }
     def user_delete( attributes: )
-      response = service.delete_user( attributes[:primary_email], attributes[:options] )
+      response = service.delete_user( attributes[:primary_email] )
+      {action: :user_delete, user: attributes[:primary_email], response: response}
+    end
+
+    private
+    def update_user( user_attr )
+      # create a user object that google will create
+      user_object = Google::Apis::AdminDirectoryV1::User.new user_attr
+      # send user object to google directory
+      service.update_user( user_attr[:primary_email], user_object )
     end
 
   end
