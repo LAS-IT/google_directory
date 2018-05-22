@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Bill Tihen", "Lee Weisbecker"]
   spec.email         = ["btihen@gmail.com", "lweisbecker@las.ch"]
 
-  spec.summary       = %q{Simple ruby wrapper to manage google accounts.}
+  spec.summary       = %q{Simple ruby wrapper to manage google accounts - using oauth2.}
   spec.description   = %q{Authenticate, list, make, check, suspend and activate google users.}
   spec.homepage      = "https://github.com/LAS-IT/google_directory"
   spec.license       = "MIT"
@@ -28,6 +28,7 @@ Gem::Specification.new do |spec|
   end
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  # https://stackoverflow.com/questions/27790712/making-a-ruby-gem-cannot-load-such-file?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
   # spec.require_paths = ["lib"]
   spec.files = Dir['lib/**/*.rb']
   # spec.files = ['lib/google_directory.rb',
