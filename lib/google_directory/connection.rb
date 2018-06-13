@@ -27,7 +27,9 @@ module GoogleDirectory
     CLIENT_SECRETS_PATH = ENV['CLIENT_SECRETS_PATH'] || 'client_secret.json'
 
     # Scope options - https://www.googleapis.com/auth/admin.directory.user
+    # https://developers.google.com/admin-sdk/directory/v1/guides/authorizing
     SCOPE = Google::Apis::AdminDirectoryV1::AUTH_ADMIN_DIRECTORY_USER
+    # SCOPE = 'https://www.googleapis.com/auth/admin.directory.user'
 
     # Initialize the API
     # https://www.rubydoc.info/github/google/google-api-ruby-client/Google/Apis/AdminDirectoryV1/DirectoryService
@@ -48,12 +50,13 @@ module GoogleDirectory
     # @param attributes [Hash] attributes needed to perform command
     # @return [Hash] formatted as: `{success: {command: :command, attributes: {primary_email: "user@domain"}, response: GoogleAnswer} }`
     def run( command:, attributes: {} )
-      response  = { success: nil, error: nil }
+      response  = {}
       begin
-        response[:success] = send( command, attributes: attributes )
+        response           = send( command, attributes: attributes )
+        response[:status]  = 'success'
       rescue Google::Apis::ClientError => error
-        response[:error]   = {command: command, attributes: attributes,
-                              error: error}
+        response = {response: error, command: command,
+                    attributes: attributes, status: 'error'}
       end
       response
     end

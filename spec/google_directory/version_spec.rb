@@ -7,6 +7,6 @@ RSpec.describe GoogleDirectory::Version do
   end
 
   it "has correct version number" do
-    expect(GoogleDirectory::Version::VERSION).to eq '0.2.0'
+    expect(GoogleDirectory::Version::VERSION).to eq '0.2.1'
   end
 end
