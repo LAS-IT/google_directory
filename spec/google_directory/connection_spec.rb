@@ -14,6 +14,14 @@ RSpec.describe GoogleDirectory::Connection do
     # expect( answer ).to eq( correct )
   end
 
+  context "connection presents version" do
+    it "matches version module" do
+      version = GoogleDirectory::Version::VERSION
+      google  = GoogleDirectory::Connection.new
+      expect( google.version ).to eql( version )
+    end
+  end
+
   context "fails to connect to google" do
     it "without a client_secret.json" do
       stub_const("GoogleDirectory::Connection::CLIENT_SECRETS_PATH", "spec/data/client_secret_no_file.json")

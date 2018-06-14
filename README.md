@@ -22,6 +22,7 @@ Or install it yourself as:
 
 ## Change Log
 
+* **0.2.2** - *2018-06-14* - add version to connection
 * **0.2.1** - *2018-06-13* - changed return values to {response: xxxx, status: 'success'}
 * **0.2.0** - *2018-05-22* - renamed action to command
 * **0.1.0** - *2018-05-22* - initial release
@@ -37,7 +38,8 @@ Or install it yourself as:
 
 # connect using
 google = GoogleDirectory::Connection.new
-
+# see gem version in use
+google.version
 ##############
 # VIEW USERS
 # ------------

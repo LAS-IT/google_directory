@@ -1,9 +1,9 @@
 require 'google/apis/admin_directory_v1'
 require 'googleauth'
 require 'googleauth/stores/file_token_store'
-
 require 'fileutils'
 
+require "google_directory/version"
 require "google_directory/user_commands"
 
 module GoogleDirectory
@@ -15,6 +15,7 @@ module GoogleDirectory
   # @note You can also use environment variables to override google defaults as wanted.
   class Connection
 
+    include GoogleDirectory::Version
     include GoogleDirectory::UserCommands
 
     # default settings from google for all users
@@ -42,6 +43,10 @@ module GoogleDirectory
       @service   = service.new
       @service.client_options.application_name = app_name
       @service.authorization = authorize
+    end
+
+    def version
+      VERSION
     end
 
     # @note Run a command against Google Directory
