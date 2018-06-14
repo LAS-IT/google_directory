@@ -13,7 +13,7 @@ module GoogleDirectory
     # @return [Hash] formatted as {success: {command: :user_get, attributes: {primary_email: "user@domain"}, response: GoogleUserObject } }
     def user_get( attributes: )
       response = service.get_user( attributes[:primary_email] )
-      {command: :user_get, user: attributes[:primary_email], response: response}
+      {response: response, attributes: attributes[:primary_email], command: :user_get}
     end
 
     # @note Test if user exists in Google Directory
@@ -23,10 +23,10 @@ module GoogleDirectory
     def user_exists?( attributes: )
       begin
         response = service.get_user( attributes[:primary_email] )
-        return {command: :user_exists?, user: attributes[:primary_email], response: true}
+        return {response: true, attributes: attributes[:primary_email], command: :user_exists?}
       rescue Google::Apis::ClientError => error
         if error.message.include? 'notFound'
-          return {command: :user_exists?, user: attributes[:primary_email], response: false}
+          return {response: false, attributes: attributes[:primary_email], command: :user_exists?}
         else
           raise error
         end
@@ -46,7 +46,7 @@ module GoogleDirectory
       user_object = Google::Apis::AdminDirectoryV1::User.new user_attr
       # create user in directory services
       response = service.insert_user( user_object )
-      {command: :user_create, user: attributes[:primary_email], response: response}
+      {response: response, attributes: attributes[:primary_email], command: :user_create}
     end
 
     # @note updates an exising Google Directory User
@@ -56,7 +56,7 @@ module GoogleDirectory
     def user_update( attributes: )
       # create a user object for google to update
       response = update_user( attributes )
-      {command: :user_update, user: attributes[:primary_email], response: response}
+      {response: response, attributes: attributes[:primary_email], command: :user_update}
     end
 
     # @note updates an exising Google Directory User password - convience method instead of using :user_update
@@ -69,7 +69,7 @@ module GoogleDirectory
       user_attr = defaults.merge( attributes )
 
       response = update_user( user_attr )
-      {command: :user_change_password, user: attributes[:primary_email], response: response}
+      {response: response, attributes: attributes[:primary_email], command: :user_change_password}
     end
 
     # @note activates an exising Google Directory User password - convience method instead of using :user_update
@@ -81,7 +81,7 @@ module GoogleDirectory
       user_attr = defaults.merge( attributes )
 
       response = update_user( user_attr )
-      {command: :user_reactivate, user: attributes[:primary_email], response: response}
+      {response: response, attributes: attributes[:primary_email], command: :user_reactivate}
     end
 
     # @note suspends an exising Google Directory User password - convience method instead of using :user_update
@@ -93,7 +93,7 @@ module GoogleDirectory
       user_attr = defaults.merge( attributes )
 
       response = update_user( user_attr )
-      {command: :user_suspend, user: attributes[:primary_email], response: response}
+      {response: response, attributes: attributes[:primary_email], command: :user_suspend}
     end
 
     # @note deletes an exising Google Directory User
@@ -102,7 +102,7 @@ module GoogleDirectory
     # @return [Hash] formatted as {success: {command: :user_delete, attributes: {primary_email: "user@domain"}, response: "" } }
     def user_delete( attributes: )
       response = service.delete_user( attributes[:primary_email] )
-      {command: :user_delete, user: attributes[:primary_email], response: response}
+      {response: response, attributes: attributes[:primary_email], command: :user_delete}
     end
 
     private

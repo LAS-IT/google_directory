@@ -17,7 +17,7 @@ module GoogleDirectory
       defaults = { max_results: 10, order_by: 'email' }
       filters  = defaults.merge( attributes )
       response = service.list_users( filters )
-      {command: :users_list, filters: filters, response: response}
+      {response: response, attributes: filters, command: :users_list}
     end
 
   end

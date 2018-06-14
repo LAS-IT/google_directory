@@ -60,8 +60,9 @@ module GoogleDirectory
         response           = send( command, attributes: attributes )
         response[:status]  = 'success'
       rescue Google::Apis::ClientError => error
-        response = {response: error, command: command,
-                    attributes: attributes, status: 'error'}
+        response = {status: 'error', response: error,
+                    attributes: attributes, command: command,
+                   }
       end
       response
     end
