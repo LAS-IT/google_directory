@@ -47,6 +47,6 @@ puts "creating Google accounts ..."
 # ##########
 puts "\nGoogle Create Commands:"
 users.each do |person|
-  puts "Creating #{attributes[:primary_email]}"
-  pp google.run(command: user_create, attributes: person)
+  puts "Creating #{person[:primary_email]}"
+  pp google.run(command: :user_create, attributes: person)
 end                               unless users.nil?

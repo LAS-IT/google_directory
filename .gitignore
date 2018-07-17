@@ -16,6 +16,8 @@ client_secret.json
 .rbenv-vars
 *.gem
 
+/.idea/
+
 /examples/users.yml
 /examples/connection.yml
 /examples/client_secret.json
