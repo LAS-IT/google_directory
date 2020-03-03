@@ -1,3 +1,5 @@
+[![Codeship Status for LAS-IT/google_directory](https://app.codeship.com/projects/6ee09d70-3f90-0138-a0e4-7ef95a7c016e/status?branch=master)](https://app.codeship.com/projects/387669)
+
 # GoogleDirectory
 
 This is an easy to use ruby wrapper for google directory management - using OAuth2.  So far only user management commands are written.
