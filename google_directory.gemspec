@@ -35,12 +35,10 @@ Gem::Specification.new do |spec|
   #               'lib/google_directory/connection.rb',
   #               'lib/google_directory/user_commands.rb']
 
-  spec.add_dependency "google-api-client", "~> 0.21"
+  spec.add_dependency "google-api-client", "~> 0.37"
 
   spec.add_development_dependency "bundler", "~> 2.1"
-  spec.add_development_dependency "rake", "~> 10.0"
-  spec.add_development_dependency "rspec", "~> 3.0"
-  # spec.add_development_dependency "rake", "~> 12.3"
-  # spec.add_development_dependency "rspec", "~> 3.7"
-  spec.add_development_dependency "pry", "~> 0.11"
+  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rspec", "~> 3.9"
+  spec.add_development_dependency "pry", "~> 0.12"
 end
