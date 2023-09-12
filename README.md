@@ -24,6 +24,7 @@ Or install it yourself as:
 
 ## Change Log
 
+* **0.2.4** - *2023-09-11* - Update to remove oobi url and add service acocunt oauth access with sub admin account
 * **0.2.3** - *2018-06-14* - update the google return for consistency
 * **0.2.2** - *2018-06-14* - add version to connection
 * **0.2.1** - *2018-06-13* - changed return values to {response: xxxx, status: 'success'}
@@ -32,6 +33,7 @@ Or install it yourself as:
 
 
 ## Usage
+
 ```ruby
 # configure
 # Use environmental variables

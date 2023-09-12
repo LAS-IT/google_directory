@@ -11,7 +11,9 @@
 .rspec_status
 
 # hide secrets from repo
+accounts.json
 client_secret.json
+google_admin_key.json
 /.credentials/*
 .rbenv-vars
 *.gem

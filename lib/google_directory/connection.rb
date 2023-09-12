@@ -1,8 +1,6 @@
-require 'google/apis/admin_directory_v1'
 require 'googleauth'
-require 'googleauth/stores/file_token_store'
+require 'google/apis/admin_directory_v1'
 require 'fileutils'
-
 require "google_directory/version"
 require "google_directory/user_commands"
 
@@ -19,17 +17,17 @@ module GoogleDirectory
     include GoogleDirectory::UserCommands
 
     # default settings from google for all users
-    OOB_URI = ENV['OOB_URI'] || 'urn:ietf:wg:oauth:2.0:oob'
-    CREDENTIALS_PATH = ENV['CREDENTIALS_PATH'] || File.join( Dir.home, '.credentials', "admin-directory_v1-ruby-accounts.yaml")
+    CREDENTIALS_PATH = ENV['CREDENTIALS_JSON_PATH']
+    SUB_ACCOUNT = ENV['SUB_ACCOUNT_NAME']
 
     # Get info the Google Cloud Admin
     # https://console.cloud.google.com/apis/ or
     # build using: https://developers.google.com/api-client-library/ruby/guide/aaa_client_secrets
-    CLIENT_SECRETS_PATH = ENV['CLIENT_SECRETS_PATH'] || 'client_secret.json'
+    # CLIENT_SECRETS_PATH = ENV['CLIENT_SECRETS_PATH'] || 'client_secret.json'
 
     # Scope options - https://www.googleapis.com/auth/admin.directory.user
     # https://developers.google.com/admin-sdk/directory/v1/guides/authorizing
-    SCOPE = Google::Apis::AdminDirectoryV1::AUTH_ADMIN_DIRECTORY_USER
+    # SCOPE = Google::Apis::AdminDirectoryV1::AUTH_ADMIN_DIRECTORY_USER
     # SCOPE = 'https://www.googleapis.com/auth/admin.directory.user'
 
     # Initialize the API
@@ -39,9 +37,7 @@ module GoogleDirectory
     # @note make connection to google directory services
     # @param service [Class] the default is: Google::Apis::AdminDirectoryV1::DirectoryService
     def initialize( service: Google::Apis::AdminDirectoryV1::DirectoryService )
-      app_name ||= ENV['APPLICATION_NAME'] || 'google_cloud_app_name'
       @service   = service.new
-      @service.client_options.application_name = app_name
       @service.authorization = authorize
     end
 
@@ -49,8 +45,6 @@ module GoogleDirectory
       VERSION
     end
 
-    # @note Run a command against Google Directory
-    #
     # @param command [Symbol] choose command to perform these include: :user_get, :user_exists? (t/f), :user_create, :user_delete, :user_update & convience commands :user_suspend, :user_reactivate, :user_change_password
     # @param attributes [Hash] attributes needed to perform command
     # @return [Hash] formatted as: `{success: {command: :command, attributes: {primary_email: "user@domain"}, response: GoogleAnswer} }`
@@ -78,32 +72,15 @@ module GoogleDirectory
 
     private
     attr_reader :service
-    ##
-    # FROM:
-    # https://www.rubydoc.info/github/google/google-api-ruby-client/Google/Apis/AdminDirectoryV1/DirectoryService
-    # Ensure valid credentials, either by restoring from the saved credentials
-    # files or intitiating an OAuth2 authorization. If authorization is required,
-    # the user's default browser will be launched to approve the request.
-    # @return [Google::Auth::UserRefreshCredentials] OAuth2 credentials
-    def authorize
-      FileUtils.mkdir_p(File.dirname(CREDENTIALS_PATH))
 
-      client_id   = Google::Auth::ClientId.from_file(CLIENT_SECRETS_PATH)
-      token_store = Google::Auth::Stores::FileTokenStore.new(file: CREDENTIALS_PATH)
-      authorizer  = Google::Auth::UserAuthorizer.new( client_id, SCOPE, token_store )
-      user_id = 'default'
-      credentials = authorizer.get_credentials(user_id)
-      if credentials.nil?
-        url = authorizer.get_authorization_url(
-          base_url: OOB_URI)
-        puts "Open the following URL in the browser and enter the " +
-             "resulting code after authorization"
-        puts url
-        code = gets
-        credentials = authorizer.get_and_store_credentials_from_code(
-          user_id: user_id, code: code, base_url: OOB_URI)
-      end
-      credentials
+    def authorize
+      scope = ['https://www.googleapis.com/auth/admin.directory.user', 'https://www.googleapis.com/auth/admin.directory.user.security']
+      authorizer = Google::Auth::ServiceAccountCredentials.make_creds(
+        json_key_io: File.open(CREDENTIALS_PATH),
+        scope: scope)
+      authorizer.update!(sub: SUB_ACCOUNT)
+      authorizer.fetch_access_token!
+      return authorizer
     end
   end
 end
